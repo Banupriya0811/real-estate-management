@@ -1,0 +1,92 @@
+<template>
+    <!-- Filters -->
+    <lightning-card title="Property Listings" icon-name="standard:home">
+        <div class="slds-p-around_medium">
+
+            <!-- Filter Row -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col">
+                    <lightning-input
+                        type="number"
+                        label="Max Price (Rent)"
+                        value={maxPrice}
+                        onchange={handleMaxPrice}>
+                    </lightning-input>
+                </div>
+                <div class="slds-col">
+                    <lightning-combobox
+                        label="Availability Status"
+                        value={availabilityStatus}
+                        options={statusOptions}
+                        onchange={handleStatus}>
+                    </lightning-combobox>
+                </div>
+                <div class="slds-col">
+                    <lightning-combobox
+                        label="Furnishing Status"
+                        value={furnishingStatus}
+                        options={furnishingOptions}
+                        onchange={handleFurnishing}>
+                    </lightning-combobox>
+                </div>
+                <div class="slds-col slds-align-bottom">
+                    <lightning-button
+                        label="Search"
+                        variant="brand"
+                        onclick={handleSearch}>
+                    </lightning-button>
+                    <lightning-button
+                        label="Clear"
+                        variant="neutral"
+                        onclick={handleClear}
+                        class="slds-m-left_small">
+                    </lightning-button>
+                </div>
+            </div>
+
+            <!-- Property Cards -->
+            <template if:true={properties}>
+                <div class="slds-grid slds-wrap slds-gutters">
+                    <template for:each={properties} for:item="prop">
+                        <div key={prop.Id} class="slds-col slds-size_1-of-3 slds-m-bottom_medium">
+                            <lightning-card title={prop.Name}>
+                                <div class="slds-p-around_small">
+                                    <p><strong>📍 </strong>{prop.City__c}, {prop.State__c}</p>
+                                    <p><strong>Type: </strong>{prop.Type__c}</p>
+                                    <p><strong>Furnishing: </strong>{prop.Furnishing_Status__c}</p>
+                                    <p><strong>Status: </strong>{prop.Status__c}</p>
+                                    <p><strong>Rent: ₹</strong>{prop.Rent__c}</p>
+                                </div>
+                            </lightning-card>
+                        </div>
+                    </template>
+                </div>
+            </template>
+
+            <!-- No Records -->
+            <template if:true={noRecords}>
+                <p class="slds-text-align_center slds-m-top_medium">
+                    No properties found.
+                </p>
+            </template>
+
+            <!-- Pagination -->
+            <div class="slds-grid slds-grid_align-center slds-m-top_medium">
+                <lightning-button
+                    label="Previous"
+                    disabled={isPrevDisabled}
+                    onclick={handlePrev}>
+                </lightning-button>
+                <span class="slds-m-horizontal_medium slds-align-middle">
+                    Page {currentPage} of {totalPages}
+                </span>
+                <lightning-button
+                    label="Next"
+                    disabled={isNextDisabled}
+                    onclick={handleNext}>
+                </lightning-button>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>
