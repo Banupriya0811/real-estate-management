@@ -1,0 +1,61 @@
+<template>
+    <lightning-card title="Tenant List" icon-name="standard:contact">
+        <div class="slds-p-around_medium">
+
+            <!-- Add Tenant Form -->
+            <lightning-card title="Add New Tenant">
+                <div class="slds-p-around_small">
+                    <lightning-input label="Tenant Name" value={tenantName}
+                        onchange={handleTenantName} required>
+                    </lightning-input>
+                    <lightning-input label="Phone" value={phone}
+                        onchange={handlePhone}>
+                    </lightning-input>
+                    <lightning-input label="Email" value={email}
+                        onchange={handleEmail} type="email">
+                    </lightning-input>
+                    <div class="slds-m-top_small">
+                        <lightning-button variant="brand" label="Add Tenant"
+                            onclick={handleAddTenant}>
+                        </lightning-button>
+                    </div>
+                    <template if:true={errorMessage}>
+                        <p class="slds-text-color_error slds-m-top_small">
+                            ⚠️ {errorMessage}
+                        </p>
+                    </template>
+                </div>
+            </lightning-card>
+
+            <!-- Tenant Table -->
+            <div class="slds-m-top_medium">
+                <template if:true={tenants}>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr>
+                                <th>Tenant Name</th>
+                                <th>Phone</th>
+                                <th>Email</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={tenants} for:item="tenant">
+                                <tr key={tenant.Id}>
+                                    <td>{tenant.Name}</td>
+                                    <td>{tenant.Phone__c}</td>
+                                    <td>{tenant.Email__c}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:true={noTenants}>
+                    <p class="slds-text-align_center slds-m-top_medium">
+                        No tenants found.
+                    </p>
+                </template>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>
