@@ -1,0 +1,71 @@
+<template>
+    <lightning-card title="Maintenance Requests" icon-name="standard:maintenance_work_rule">
+        <div class="slds-p-around_medium">
+
+            <!-- Add Request Form -->
+            <lightning-card title="New Maintenance Request">
+                <div class="slds-p-around_small">
+                    <lightning-combobox
+                        label="Property"
+                        value={selectedProperty}
+                        options={propertyOptions}
+                        onchange={handleProperty}
+                        required>
+                    </lightning-combobox>
+                    <lightning-textarea
+                        label="Description"
+                        value={description}
+                        onchange={handleDescription}
+                        required>
+                    </lightning-textarea>
+                    <div class="slds-m-top_small">
+                        <lightning-button
+                            variant="brand"
+                            label="Submit Request"
+                            onclick={handleSubmit}>
+                        </lightning-button>
+                    </div>
+                    <template if:true={errorMessage}>
+                        <p class="slds-text-color_error slds-m-top_small">
+                            ⚠️ {errorMessage}
+                        </p>
+                    </template>
+                </div>
+            </lightning-card>
+
+            <!-- Requests Table -->
+            <div class="slds-m-top_medium">
+                <template if:true={requests}>
+                    <table class="slds-table slds-table_cell-buffer slds-table_bordered">
+                        <thead>
+                            <tr>
+                                <th>Request Name</th>
+                                <th>Property</th>
+                                <th>Assigned Vendor</th>
+                                <th>Status</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <template for:each={requests} for:item="req">
+                                <tr key={req.Id}>
+                                    <td>{req.Name}</td>
+                                    <td>{req.Property__r.Name}</td>
+                                    <td>{req.Vendor__r.Name}</td>
+                                    <td>{req.Status__c}</td>
+                                    <td>{req.Description__c}</td>
+                                </tr>
+                            </template>
+                        </tbody>
+                    </table>
+                </template>
+                <template if:true={noRequests}>
+                    <p class="slds-text-align_center slds-m-top_medium">
+                        No maintenance requests found.
+                    </p>
+                </template>
+            </div>
+
+        </div>
+    </lightning-card>
+</template>
