@@ -18,6 +18,7 @@ export default class PropertyForm extends LightningElement {
     @track imageUploaded = false;
     @track uploadedCount = 0;
     @track errorMessage = '';
+    @track isSaving = false;
 
     acceptedFormats = ['.jpg', '.jpeg', '.png', '.gif'];
 
@@ -50,6 +51,8 @@ export default class PropertyForm extends LightningElement {
     handleDescription(e) { this.description = e.target.value; }
 
     handleSave() {
+        // Prevent duplicate saves
+        if (this.isSaving) return;
         this.errorMessage = '';
 
         // Validate required fields
@@ -60,11 +63,14 @@ export default class PropertyForm extends LightningElement {
             return;
         }
 
-        // Validate image is uploaded
+        // Validate image uploaded
         if (!this.imageUploaded) {
             this.errorMessage = 'Please upload at least one property image.';
             return;
         }
+
+        // Set saving flag AFTER validation passes
+        this.isSaving = true;
 
         const prop = {
             Name: this.name,
@@ -82,7 +88,8 @@ export default class PropertyForm extends LightningElement {
 
         createProperty({ prop })
             .then(result => {
-                this.recordId = result.Id;
+                this.isSaving = false;
+                this.recordId = result;
                 this.dispatchEvent(new ShowToastEvent({
                     title: 'Success!',
                     message: 'Property created successfully.',
@@ -91,7 +98,9 @@ export default class PropertyForm extends LightningElement {
                 this.handleClear();
             })
             .catch(error => {
-                this.errorMessage = 'Error creating property: ' + error.body.message;
+                this.isSaving = false;
+                this.errorMessage = 'Error creating property: ' +
+                    (error.body ? error.body.message : error.message);
             });
     }
 
@@ -121,5 +130,6 @@ export default class PropertyForm extends LightningElement {
         this.imageUploaded = false;
         this.uploadedCount = 0;
         this.errorMessage = '';
+        this.isSaving = false;
     }
 }

@@ -1,6 +1,6 @@
 public with sharing class PropertyController {
 
-    @AuraEnabled(cacheable=true)
+    @AuraEnabled(cacheable=false)
     public static Map<String, Object> getProperties(
         Integer pageSize,
         Integer pageNumber,
@@ -19,14 +19,12 @@ public with sharing class PropertyController {
         if (String.isNotBlank(furnishingStatus))
             baseQuery += ' AND Furnishing_Status__c = \'' + furnishingStatus + '\'';
 
-        // Count total records
         String countQuery = baseQuery.replace(
             'SELECT Id, Name, Address__c, City__c, State__c, Type__c, Status__c, Furnishing_Status__c, Rent__c, Description__c',
             'SELECT COUNT()'
         );
         Integer totalCount = Database.countQuery(countQuery);
 
-        // Apply pagination
         Integer offset = (pageNumber - 1) * pageSize;
         baseQuery += ' ORDER BY CreatedDate DESC LIMIT ' + pageSize + ' OFFSET ' + offset;
 
@@ -40,8 +38,13 @@ public with sharing class PropertyController {
     }
 
     @AuraEnabled
-    public static Property__c createProperty(Property__c prop) {
-        insert prop;
-        return prop;
+    public static Id createProperty(Property__c prop) {
+        try {
+            insert prop;
+            return prop.Id;
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
     }
+
 }
